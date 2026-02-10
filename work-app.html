@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReelHK - App Video Demo</title>
+    <link rel="icon" type="image/jpeg" href="/favicon.jpg">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #0a0a0a;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            width: 100%;
+            max-width: 900px;
+        }
+        h1 {
+            color: #fff;
+            font-size: 24px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .subtitle {
+            color: #888;
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .back-link {
+            margin-top: 30px;
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+        .back-link:hover {
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>App Demo Video</h1>
+        <p class="subtitle">Mobile Application Showcase</p>
+        
+        <div class="video-wrapper">
+            <iframe src="https://player.vimeo.com/video/1163659893?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479" 
+                    frameborder="0" 
+                    allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media" 
+                    title="App Demo Video">
+            </iframe>
+        </div>
+        
+        <a href="/" class="back-link">← Back to Home</a>
+    </div>
+    
+    <script src="https://player.vimeo.com/api/player.js"></script>
+</body>
+</html>
