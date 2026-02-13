@@ -131,14 +131,12 @@
         document.body.style.overflow = '';
       }
 
-      // Simple close on any click in the lightbox (except video)
+      // Close ONLY when clicking the dark background (lightbox itself), not the content
       lightbox.addEventListener('click', (e) => {
-        // If clicked on video, don't close
-        if (e.target === videoPlayer || e.target.tagName === 'VIDEO') {
-          return;
+        // Only close if clicked directly on the lightbox background (the dark overlay)
+        if (e.target === lightbox) {
+          closeReelhkLightbox();
         }
-        // Close for everything else
-        closeReelhkLightbox();
       });
 
       // Close on ESC key
