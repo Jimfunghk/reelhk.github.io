@@ -72,17 +72,29 @@
       // Video mapping based on text content
       const videoMap = {
         '餐飲美食': 'work_fnb.mp4',
+        '餐飲': 'work_fnb.mp4',
+        '美食': 'work_fnb.mp4',
         '茶餐廳': 'work_fnb.mp4',
+        '餐廳': 'work_fnb.mp4',
+        '飲食': 'work_fnb.mp4',
         '手機應用': 'work_app1.mp4',
+        '手機': 'work_app1.mp4',
+        '應用': 'work_app1.mp4',
         'App': 'work_app1.mp4',
+        'app': 'work_app1.mp4',
         '零售時尚': 'work_fashion.mp4',
+        '零售': 'work_fashion.mp4',
         '時尚': 'work_fashion.mp4',
+        'fashion': 'work_fashion.mp4',
         '生活方式': 'work_lifestyle.mp4',
+        '生活': 'work_lifestyle.mp4',
         '美容護理': 'work_skincare.mp4',
+        '美容': 'work_skincare.mp4',
         '護理': 'work_skincare.mp4',
         'skincare': 'work_skincare.mp4',
         '科技產品': 'work_tech.mp4',
-        '科技': 'work_tech.mp4'
+        '科技': 'work_tech.mp4',
+        '產品': 'work_tech.mp4'
       };
 
       const lightbox = document.getElementById('reelhkLightbox');
@@ -139,7 +151,9 @@
           '[class*="project"]',
           '.group',
           'article',
-          '[class*="card"]'
+          '[class*="card"]',
+          'img', // Also check images directly
+          '[class*="relative"]'
         ];
         
         const elements = document.querySelectorAll(selectors.join(', '));
@@ -150,15 +164,55 @@
           const video = findVideoForElement(el);
           if (video) {
             el.style.cursor = 'pointer';
-            el.addEventListener('click', (e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              openReelhkLightbox(video);
-            });
+            
+            // For images, find the parent container
+            let targetEl = el;
+            if (el.tagName === 'IMG') {
+              // Find a clickable parent (at least 2 levels up to get the card)
+              let parent = el.parentElement;
+              for (let i = 0; i < 3 && parent; i++) {
+                if (parent.dataset && parent.dataset.reelhkClickAdded) {
+                  targetEl = null;
+                  break;
+                }
+                if (parent.children.length > 1 || parent.getBoundingClientRect().width > 200) {
+                  targetEl = parent;
+                  break;
+                }
+                parent = parent.parentElement;
+              }
+            }
+            
+            if (targetEl && !targetEl.dataset.reelhkClickAdded) {
+              targetEl.style.cursor = 'pointer';
+              targetEl.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                openReelhkLightbox(video);
+              });
+              targetEl.dataset.reelhkClickAdded = 'true';
+            }
+            
             el.dataset.reelhkClickAdded = 'true';
           }
         });
       }
+      
+      // Also use event delegation on the body
+      document.body.addEventListener('click', (e) => {
+        // Find if we clicked on or inside a portfolio item
+        let target = e.target;
+        for (let i = 0; i < 6 && target && target !== document.body; i++) {
+          const video = findVideoForElement(target);
+          if (video && !e.defaultPrevented) {
+            e.preventDefault();
+            e.stopPropagation();
+            openReelhkLightbox(video);
+            return;
+          }
+          target = target.parentElement;
+        }
+      });
 
       // Watch for DOM changes and add handlers
       const observer = new MutationObserver((mutations) => {
