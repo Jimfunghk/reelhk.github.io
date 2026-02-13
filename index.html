@@ -7,8 +7,177 @@
     <link rel="icon" type="image/png" href="/favicon.png">
     <script type="module" crossorigin src="./assets/index-DE56Pd2R.js"></script>
     <link rel="stylesheet" crossorigin href="./assets/index-DgNIWs2U.css">
+    <style>
+      /* Lightbox styles */
+      .reelhk-lightbox {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.95);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+      .reelhk-lightbox.active {
+        display: flex;
+      }
+      .reelhk-lightbox-content {
+        position: relative;
+        max-width: 1000px;
+        width: 100%;
+      }
+      .reelhk-lightbox-close {
+        position: absolute;
+        top: -50px;
+        right: 0;
+        color: #fff;
+        font-size: 36px;
+        cursor: pointer;
+        background: none;
+        border: none;
+        line-height: 1;
+        z-index: 10;
+      }
+      .reelhk-lightbox-close:hover {
+        color: #ccc;
+      }
+      .reelhk-lightbox video {
+        width: 100%;
+        border-radius: 12px;
+      }
+      /* Click cursor on portfolio items */
+      [class*="portfolio"], [class*="work"], .group {
+        cursor: pointer;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
+    
+    <!-- Lightbox -->
+    <div class="reelhk-lightbox" id="reelhkLightbox">
+      <div class="reelhk-lightbox-content">
+        <button class="reelhk-lightbox-close" onclick="closeReelhkLightbox()">&times;</button>
+        <video id="reelhkVideo" controls autoplay>
+          <source src="" type="video/mp4">
+        </video>
+      </div>
+    </div>
+
+    <script>
+      // Video mapping based on text content
+      const videoMap = {
+        '餐飲美食': 'work_fnb.mp4',
+        '茶餐廳': 'work_fnb.mp4',
+        '手機應用': 'work_app1.mp4',
+        'App': 'work_app1.mp4',
+        '零售時尚': 'work_fashion.mp4',
+        '時尚': 'work_fashion.mp4',
+        '生活方式': 'work_lifestyle.mp4',
+        '美容護理': 'work_skincare.mp4',
+        '護理': 'work_skincare.mp4',
+        'skincare': 'work_skincare.mp4',
+        '科技產品': 'work_tech.mp4',
+        '科技': 'work_tech.mp4'
+      };
+
+      const lightbox = document.getElementById('reelhkLightbox');
+      const videoPlayer = document.getElementById('reelhkVideo');
+
+      function openReelhkLightbox(videoSrc) {
+        videoPlayer.src = videoSrc;
+        lightbox.classList.add('active');
+      }
+
+      function closeReelhkLightbox() {
+        lightbox.classList.remove('active');
+        videoPlayer.pause();
+        videoPlayer.src = '';
+      }
+
+      // Close on background click
+      lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox) closeReelhkLightbox();
+      });
+
+      // Close on ESC key
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeReelhkLightbox();
+      });
+
+      // Function to find video for an element
+      function findVideoForElement(element) {
+        // Check element's text content
+        const text = element.textContent || '';
+        for (const [key, video] of Object.entries(videoMap)) {
+          if (text.includes(key)) return video;
+        }
+        
+        // Check parent elements
+        let parent = element.parentElement;
+        for (let i = 0; i < 5 && parent; i++) {
+          const parentText = parent.textContent || '';
+          for (const [key, video] of Object.entries(videoMap)) {
+            if (parentText.includes(key)) return video;
+          }
+          parent = parent.parentElement;
+        }
+        
+        return null;
+      }
+
+      // Add click handlers to portfolio items
+      function addClickHandlers() {
+        // Try to find portfolio cards by common patterns
+        const selectors = [
+          '[class*="portfolio"]',
+          '[class*="work"]',
+          '[class*="project"]',
+          '.group',
+          'article',
+          '[class*="card"]'
+        ];
+        
+        const elements = document.querySelectorAll(selectors.join(', '));
+        
+        elements.forEach(el => {
+          if (el.dataset.reelhkClickAdded) return;
+          
+          const video = findVideoForElement(el);
+          if (video) {
+            el.style.cursor = 'pointer';
+            el.addEventListener('click', (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              openReelhkLightbox(video);
+            });
+            el.dataset.reelhkClickAdded = 'true';
+          }
+        });
+      }
+
+      // Watch for DOM changes and add handlers
+      const observer = new MutationObserver((mutations) => {
+        addClickHandlers();
+      });
+
+      // Start observing when DOM is ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+          observer.observe(document.body, { childList: true, subtree: true });
+          setTimeout(addClickHandlers, 1000); // Initial check after React loads
+        });
+      } else {
+        observer.observe(document.body, { childList: true, subtree: true });
+        setTimeout(addClickHandlers, 1000);
+      }
+
+      // Also check periodically
+      setInterval(addClickHandlers, 2000);
+    </script>
   </body>
 </html>
