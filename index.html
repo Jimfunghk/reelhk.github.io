@@ -25,39 +25,26 @@
       .reelhk-lightbox.active {
         display: flex;
       }
-      .reelhk-lightbox-content {
-        position: relative;
-        max-width: 1000px;
-        width: 100%;
-      }
       .reelhk-lightbox-close {
-        position: absolute;
-        top: -50px;
-        right: 0;
+        position: fixed;
+        top: 20px;
+        right: 20px;
         color: #fff;
         font-size: 48px;
         cursor: pointer;
         background: none;
         border: none;
         line-height: 1;
-        z-index: 10000;
+        z-index: 10001;
         padding: 10px;
       }
       .reelhk-lightbox-close:hover {
         color: #ccc;
       }
       .reelhk-lightbox video {
-        width: 100%;
-        border-radius: 12px;
+        max-width: 90%;
         max-height: 80vh;
-      }
-      .back-hint {
-        position: absolute;
-        bottom: -40px;
-        left: 50%;
-        transform: translateX(-50%);
-        color: #888;
-        font-size: 14px;
+        border-radius: 12px;
       }
       /* Click cursor on portfolio items */
       [class*="portfolio"], [class*="work"], .group {
@@ -70,13 +57,8 @@
     
     <!-- Lightbox -->
     <div class="reelhk-lightbox" id="reelhkLightbox">
-      <div class="reelhk-lightbox-content">
-        <button class="reelhk-lightbox-close" onclick="closeReelhkLightbox()">&times;</button>
-        <video id="reelhkVideo" controls autoplay>
-          <source src="" type="video/mp4">
-        </video>
-        <div class="back-hint">Click anywhere outside video to go back</div>
-      </div>
+      <button class="reelhk-lightbox-close" onclick="closeReelhkLightbox()">&times;</button>
+      <video id="reelhkVideo" controls autoplay></video>
     </div>
 
     <script>
