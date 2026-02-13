@@ -71,12 +71,13 @@
     <script>
       // Video mapping based on text content
       const videoMap = {
-        '餐飲美食': 'work_fnb.mp4',
-        '餐飲': 'work_fnb.mp4',
-        '美食': 'work_fnb.mp4',
-        '茶餐廳': 'work_fnb.mp4',
-        '餐廳': 'work_fnb.mp4',
-        '飲食': 'work_fnb.mp4',
+        '餐飲美食': 'work-fnb.mp4',
+        '餐飲': 'work-fnb.mp4',
+        '美食': 'work-fnb.mp4',
+        '茶餐廳': 'work-fnb.mp4',
+        '餐廳': 'work-fnb.mp4',
+        '飲食': 'work-fnb.mp4',
+        'F&B': 'work-fnb.mp4',
         '手機應用': 'work_app1.mp4',
         '手機': 'work_app1.mp4',
         '應用': 'work_app1.mp4',
@@ -111,9 +112,22 @@
         videoPlayer.src = '';
       }
 
-      // Close on background click
+      // Close on background click (anywhere outside video)
       lightbox.addEventListener('click', (e) => {
-        if (e.target === lightbox) closeReelhkLightbox();
+        const videoRect = videoPlayer.getBoundingClientRect();
+        const clickX = e.clientX;
+        const clickY = e.clientY;
+        
+        // Check if click is outside the video area
+        const isOutsideVideo = 
+          clickX < videoRect.left || 
+          clickX > videoRect.right || 
+          clickY < videoRect.top || 
+          clickY > videoRect.bottom;
+        
+        if (isOutsideVideo || e.target === lightbox) {
+          closeReelhkLightbox();
+        }
       });
 
       // Close on ESC key
