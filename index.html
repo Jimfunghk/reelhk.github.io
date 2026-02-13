@@ -76,7 +76,7 @@
         'work-lifestyle': 'work_lifestyle.mp4',
         'work-retail': 'work_skincare.mp4',
         'work-tech': 'work_tech.mp4',
-        'work-fnb': 'work_fnb.mp4'
+        'work-fnb': 'work-food.mp4'
       };
 
       const lightbox = document.getElementById('reelhkLightbox');
@@ -119,8 +119,8 @@
         for (let i = 0; i < 5 && el; i++) {
           const text = (el.innerText || el.textContent || '').toLowerCase();
           
-          if (text.includes('餐飲') || text.includes('美食') || text.includes('fnb')) {
-            return 'work-fnb.mp4';
+          if (text.includes('餐飲') || text.includes('美食') || text.includes('fnb') || text.includes('food')) {
+            return 'work-food.mp4';
           }
           if (text.includes('手機') || text.includes('app')) {
             return 'work_app1.mp4';
