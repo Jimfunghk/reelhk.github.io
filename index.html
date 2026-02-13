@@ -207,12 +207,19 @@
         const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
         let node;
         while (node = walker.nextNode()) {
-          // Chinese
+          // Traditional Chinese
           if (node.textContent.includes('無限修改')) {
             node.textContent = node.textContent.replace(/無限修改/g, 'AI 無界創作');
           }
           if (node.textContent.includes('修改到滿意為止，確保質素')) {
             node.textContent = node.textContent.replace(/修改到滿意為止，確保質素/g, '想像即現實，品質即承諾');
+          }
+          // Simplified Chinese
+          if (node.textContent.includes('无限修改')) {
+            node.textContent = node.textContent.replace(/无限修改/g, 'AI 无界创作');
+          }
+          if (node.textContent.includes('修改到满意为止，确保质素')) {
+            node.textContent = node.textContent.replace(/修改到满意为止，确保质素/g, '想象即现实，品质即承诺');
           }
           // English
           if (node.textContent.includes('Unlimited Edits') || node.textContent.includes('Unlimited Revisions')) {
