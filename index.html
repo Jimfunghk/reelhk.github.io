@@ -6,7 +6,7 @@
     <title>ReelHK</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     <script type="module" crossorigin src="./assets/index-DE56Pd2R.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-DgNIWs2U.css?v=2">
+    <link rel="stylesheet" crossorigin href="./assets/index-DgNIWs2U.css?v=3">
     <style>
       /* Lightbox styles */
       .reelhk-lightbox {
@@ -56,10 +56,6 @@
         z-index: 2;
         position: relative;
       }
-      /* Click cursor on portfolio items */
-      [class*="portfolio"], [class*="work"], .group {
-        cursor: pointer;
-      }
     </style>
   </head>
   <body>
@@ -73,37 +69,14 @@
     </div>
 
     <script>
-      // Video mapping based on text content
-      const videoMap = {
-        '餐飲美食': 'work-fnb.mp4',
-        '餐飲': 'work-fnb.mp4',
-        '美食': 'work-fnb.mp4',
-        '茶餐廳': 'work-fnb.mp4',
-        '餐廳': 'work-fnb.mp4',
-        '飲食': 'work-fnb.mp4',
-        'F&B': 'work-fnb.mp4',
-        'fnb': 'work-fnb.mp4',
-        'fn&b': 'work-fnb.mp4',
-        '手機應用': 'work_app1.mp4',
-        '手機': 'work_app1.mp4',
-        '應用': 'work_app1.mp4',
-        'App': 'work_app1.mp4',
-        'app': 'work_app1.mp4',
-        '零售時尚': 'work_fashion.mp4',
-        '零售': 'work_fashion.mp4',
-        '時尚': 'work_fashion.mp4',
-        'fashion': 'work_fashion.mp4',
-        '生活方式': 'work_lifestyle.mp4',
-        '生活': 'work_lifestyle.mp4',
-        'lifestyle': 'work_lifestyle.mp4',
-        '美容護理': 'work_skincare.mp4',
-        '美容': 'work_skincare.mp4',
-        '護理': 'work_skincare.mp4',
-        'skincare': 'work_skincare.mp4',
-        '科技產品': 'work_tech.mp4',
-        '科技': 'work_tech.mp4',
-        '產品': 'work_tech.mp4',
-        'tech': 'work_tech.mp4'
+      // Image filename to video mapping
+      const imageToVideo = {
+        'work-app': 'work_app1.mp4',
+        'work-beauty': 'work_fashion.mp4', 
+        'work-lifestyle': 'work_lifestyle.mp4',
+        'work-retail': 'work_skincare.mp4',
+        'work-tech': 'work_tech.mp4',
+        'work-fnb': 'work_fnb.mp4'
       };
 
       const lightbox = document.getElementById('reelhkLightbox');
@@ -129,95 +102,92 @@
         if (e.key === 'Escape') closeReelhkLightbox();
       });
 
-      // Function to find video for an element
-      function findVideoForElement(element) {
-        // Get all text from this element and children
-        const text = element.innerText || element.textContent || '';
-        const lowerText = text.toLowerCase();
+      // Find video based on image src or nearby text
+      function findVideoForCard(img) {
+        const src = img.src || '';
+        const alt = img.alt || '';
         
-        // Check exact matches first
-        for (const [key, video] of Object.entries(videoMap)) {
-          if (text.includes(key)) {
-            console.log('Found video for:', key, '->', video);
+        // Check image filename first
+        for (const [key, video] of Object.entries(imageToVideo)) {
+          if (src.includes(key) || alt.includes(key)) {
             return video;
           }
         }
         
-        // Check lowercase matches
-        for (const [key, video] of Object.entries(videoMap)) {
-          if (lowerText.includes(key.toLowerCase())) {
-            console.log('Found video (lowercase) for:', key, '->', video);
-            return video;
+        // Check parent elements for text clues
+        let el = img.parentElement;
+        for (let i = 0; i < 5 && el; i++) {
+          const text = (el.innerText || el.textContent || '').toLowerCase();
+          
+          if (text.includes('餐飲') || text.includes('美食') || text.includes('fnb')) {
+            return 'work-fnb.mp4';
           }
+          if (text.includes('手機') || text.includes('app')) {
+            return 'work_app1.mp4';
+          }
+          if (text.includes('零售') || text.includes('時尚') || text.includes('beauty')) {
+            return 'work_fashion.mp4';
+          }
+          if (text.includes('生活') || text.includes('lifestyle')) {
+            return 'work_lifestyle.mp4';
+          }
+          if (text.includes('美容') || text.includes('護理') || text.includes('retail')) {
+            return 'work_skincare.mp4';
+          }
+          if (text.includes('科技') || text.includes('產品') || text.includes('tech')) {
+            return 'work_tech.mp4';
+          }
+          
+          el = el.parentElement;
         }
         
         return null;
       }
 
-      // Find all clickable portfolio items
-      function findPortfolioItems() {
-        // Get all elements and check their text content
-        const allElements = document.querySelectorAll('*');
-        const portfolioItems = [];
-        
-        allElements.forEach(el => {
-          // Skip script, style, meta tags
-          if (['SCRIPT', 'STYLE', 'META', 'LINK', 'HEAD'].includes(el.tagName)) return;
-          
-          const video = findVideoForElement(el);
-          if (video && !portfolioItems.find(item => item.element === el)) {
-            // Find the outermost container that has this text
-            let container = el;
-            let parent = el.parentElement;
-            while (parent && parent !== document.body) {
-              const parentVideo = findVideoForElement(parent);
-              if (parentVideo === video && parent.innerText === el.innerText) {
-                container = parent;
-                parent = parent.parentElement;
-              } else {
-                break;
-              }
-            }
-            
-            portfolioItems.push({ element: container, video: video });
-          }
-        });
-        
-        return portfolioItems;
-      }
-
       // Add click handlers
       function addClickHandlers() {
-        const items = findPortfolioItems();
-        console.log('Found portfolio items:', items.length);
+        const images = document.querySelectorAll('img');
         
-        items.forEach(({ element, video }) => {
-          if (element.dataset.reelhkClickAdded) return;
+        images.forEach(img => {
+          if (img.dataset.reelhkHandled) return;
           
-          element.style.cursor = 'pointer';
-          element.addEventListener('click', (e) => {
+          const video = findVideoForCard(img);
+          if (!video) return;
+          
+          // Find clickable container
+          let container = img;
+          let parent = img.parentElement;
+          for (let i = 0; i < 3 && parent; i++) {
+            const rect = parent.getBoundingClientRect();
+            if (rect.width > 150 && rect.height > 100) {
+              container = parent;
+              break;
+            }
+            parent = parent.parentElement;
+          }
+          
+          if (container.dataset.reelhkHandled) return;
+          
+          container.style.cursor = 'pointer';
+          container.addEventListener('click', (e) => {
+            if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON') return;
             e.preventDefault();
             e.stopPropagation();
-            console.log('Clicked:', video);
+            console.log('Playing:', video);
             openReelhkLightbox(video);
           });
-          element.dataset.reelhkClickAdded = 'true';
-          console.log('Added click handler for:', video);
+          
+          container.dataset.reelhkHandled = 'true';
+          img.dataset.reelhkHandled = 'true';
+          console.log('Handler added:', video);
         });
       }
 
-      // Watch for DOM changes
-      const observer = new MutationObserver((mutations) => {
-        addClickHandlers();
-      });
-
-      // Start when ready
+      // Initialize
       function init() {
-        observer.observe(document.body, { childList: true, subtree: true });
         addClickHandlers();
-        setTimeout(addClickHandlers, 500);
-        setTimeout(addClickHandlers, 1500);
-        setTimeout(addClickHandlers, 3000);
+        setTimeout(addClickHandlers, 1000);
+        setTimeout(addClickHandlers, 2500);
       }
 
       if (document.readyState === 'loading') {
@@ -226,8 +196,11 @@
         init();
       }
 
-      // Periodic check
-      setInterval(addClickHandlers, 3000);
+      // Watch for DOM changes
+      new MutationObserver(() => addClickHandlers()).observe(document.body, { 
+        childList: true, 
+        subtree: true 
+      });
     </script>
   </body>
 </html>
