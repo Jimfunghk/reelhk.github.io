@@ -35,12 +35,13 @@
         top: -50px;
         right: 0;
         color: #fff;
-        font-size: 36px;
+        font-size: 48px;
         cursor: pointer;
         background: none;
         border: none;
         line-height: 1;
-        z-index: 10;
+        z-index: 10000;
+        padding: 10px;
       }
       .reelhk-lightbox-close:hover {
         color: #ccc;
@@ -48,6 +49,15 @@
       .reelhk-lightbox video {
         width: 100%;
         border-radius: 12px;
+        max-height: 80vh;
+      }
+      .back-hint {
+        position: absolute;
+        bottom: -40px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: #888;
+        font-size: 14px;
       }
       /* Click cursor on portfolio items */
       [class*="portfolio"], [class*="work"], .group {
@@ -65,6 +75,7 @@
         <video id="reelhkVideo" controls autoplay>
           <source src="" type="video/mp4">
         </video>
+        <div class="back-hint">Click anywhere outside video to go back</div>
       </div>
     </div>
 
@@ -78,6 +89,8 @@
         '餐廳': 'work-fnb.mp4',
         '飲食': 'work-fnb.mp4',
         'F&B': 'work-fnb.mp4',
+        'fnb': 'work-fnb.mp4',
+        'fn&b': 'work-fnb.mp4',
         '手機應用': 'work_app1.mp4',
         '手機': 'work_app1.mp4',
         '應用': 'work_app1.mp4',
@@ -89,45 +102,43 @@
         'fashion': 'work_fashion.mp4',
         '生活方式': 'work_lifestyle.mp4',
         '生活': 'work_lifestyle.mp4',
+        'lifestyle': 'work_lifestyle.mp4',
         '美容護理': 'work_skincare.mp4',
         '美容': 'work_skincare.mp4',
         '護理': 'work_skincare.mp4',
         'skincare': 'work_skincare.mp4',
         '科技產品': 'work_tech.mp4',
         '科技': 'work_tech.mp4',
-        '產品': 'work_tech.mp4'
+        '產品': 'work_tech.mp4',
+        'tech': 'work_tech.mp4'
       };
 
       const lightbox = document.getElementById('reelhkLightbox');
       const videoPlayer = document.getElementById('reelhkVideo');
 
       function openReelhkLightbox(videoSrc) {
+        console.log('Opening video:', videoSrc);
         videoPlayer.src = videoSrc;
         lightbox.classList.add('active');
+        document.body.style.overflow = 'hidden';
       }
 
       function closeReelhkLightbox() {
+        console.log('Closing lightbox');
         lightbox.classList.remove('active');
         videoPlayer.pause();
         videoPlayer.src = '';
+        document.body.style.overflow = '';
       }
 
-      // Close on background click (anywhere outside video)
+      // Simple close on any click in the lightbox (except video)
       lightbox.addEventListener('click', (e) => {
-        const videoRect = videoPlayer.getBoundingClientRect();
-        const clickX = e.clientX;
-        const clickY = e.clientY;
-        
-        // Check if click is outside the video area
-        const isOutsideVideo = 
-          clickX < videoRect.left || 
-          clickX > videoRect.right || 
-          clickY < videoRect.top || 
-          clickY > videoRect.bottom;
-        
-        if (isOutsideVideo || e.target === lightbox) {
-          closeReelhkLightbox();
+        // If clicked on video, don't close
+        if (e.target === videoPlayer || e.target.tagName === 'VIDEO') {
+          return;
         }
+        // Close for everything else
+        closeReelhkLightbox();
       });
 
       // Close on ESC key
@@ -137,115 +148,103 @@
 
       // Function to find video for an element
       function findVideoForElement(element) {
-        // Check element's text content
-        const text = element.textContent || '';
+        // Get all text from this element and children
+        const text = element.innerText || element.textContent || '';
+        const lowerText = text.toLowerCase();
+        
+        // Check exact matches first
         for (const [key, video] of Object.entries(videoMap)) {
-          if (text.includes(key)) return video;
+          if (text.includes(key)) {
+            console.log('Found video for:', key, '->', video);
+            return video;
+          }
         }
         
-        // Check parent elements
-        let parent = element.parentElement;
-        for (let i = 0; i < 5 && parent; i++) {
-          const parentText = parent.textContent || '';
-          for (const [key, video] of Object.entries(videoMap)) {
-            if (parentText.includes(key)) return video;
+        // Check lowercase matches
+        for (const [key, video] of Object.entries(videoMap)) {
+          if (lowerText.includes(key.toLowerCase())) {
+            console.log('Found video (lowercase) for:', key, '->', video);
+            return video;
           }
-          parent = parent.parentElement;
         }
         
         return null;
       }
 
-      // Add click handlers to portfolio items
-      function addClickHandlers() {
-        // Try to find portfolio cards by common patterns
-        const selectors = [
-          '[class*="portfolio"]',
-          '[class*="work"]',
-          '[class*="project"]',
-          '.group',
-          'article',
-          '[class*="card"]',
-          'img', // Also check images directly
-          '[class*="relative"]'
-        ];
+      // Find all clickable portfolio items
+      function findPortfolioItems() {
+        // Get all elements and check their text content
+        const allElements = document.querySelectorAll('*');
+        const portfolioItems = [];
         
-        const elements = document.querySelectorAll(selectors.join(', '));
-        
-        elements.forEach(el => {
-          if (el.dataset.reelhkClickAdded) return;
+        allElements.forEach(el => {
+          // Skip script, style, meta tags
+          if (['SCRIPT', 'STYLE', 'META', 'LINK', 'HEAD'].includes(el.tagName)) return;
           
           const video = findVideoForElement(el);
-          if (video) {
-            el.style.cursor = 'pointer';
-            
-            // For images, find the parent container
-            let targetEl = el;
-            if (el.tagName === 'IMG') {
-              // Find a clickable parent (at least 2 levels up to get the card)
-              let parent = el.parentElement;
-              for (let i = 0; i < 3 && parent; i++) {
-                if (parent.dataset && parent.dataset.reelhkClickAdded) {
-                  targetEl = null;
-                  break;
-                }
-                if (parent.children.length > 1 || parent.getBoundingClientRect().width > 200) {
-                  targetEl = parent;
-                  break;
-                }
+          if (video && !portfolioItems.find(item => item.element === el)) {
+            // Find the outermost container that has this text
+            let container = el;
+            let parent = el.parentElement;
+            while (parent && parent !== document.body) {
+              const parentVideo = findVideoForElement(parent);
+              if (parentVideo === video && parent.innerText === el.innerText) {
+                container = parent;
                 parent = parent.parentElement;
+              } else {
+                break;
               }
             }
             
-            if (targetEl && !targetEl.dataset.reelhkClickAdded) {
-              targetEl.style.cursor = 'pointer';
-              targetEl.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                openReelhkLightbox(video);
-              });
-              targetEl.dataset.reelhkClickAdded = 'true';
-            }
-            
-            el.dataset.reelhkClickAdded = 'true';
+            portfolioItems.push({ element: container, video: video });
           }
         });
+        
+        return portfolioItems;
       }
-      
-      // Also use event delegation on the body
-      document.body.addEventListener('click', (e) => {
-        // Find if we clicked on or inside a portfolio item
-        let target = e.target;
-        for (let i = 0; i < 6 && target && target !== document.body; i++) {
-          const video = findVideoForElement(target);
-          if (video && !e.defaultPrevented) {
+
+      // Add click handlers
+      function addClickHandlers() {
+        const items = findPortfolioItems();
+        console.log('Found portfolio items:', items.length);
+        
+        items.forEach(({ element, video }) => {
+          if (element.dataset.reelhkClickAdded) return;
+          
+          element.style.cursor = 'pointer';
+          element.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
+            console.log('Clicked:', video);
             openReelhkLightbox(video);
-            return;
-          }
-          target = target.parentElement;
-        }
-      });
+          });
+          element.dataset.reelhkClickAdded = 'true';
+          console.log('Added click handler for:', video);
+        });
+      }
 
-      // Watch for DOM changes and add handlers
+      // Watch for DOM changes
       const observer = new MutationObserver((mutations) => {
         addClickHandlers();
       });
 
-      // Start observing when DOM is ready
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
-          observer.observe(document.body, { childList: true, subtree: true });
-          setTimeout(addClickHandlers, 1000); // Initial check after React loads
-        });
-      } else {
+      // Start when ready
+      function init() {
         observer.observe(document.body, { childList: true, subtree: true });
-        setTimeout(addClickHandlers, 1000);
+        addClickHandlers();
+        setTimeout(addClickHandlers, 500);
+        setTimeout(addClickHandlers, 1500);
+        setTimeout(addClickHandlers, 3000);
       }
 
-      // Also check periodically
-      setInterval(addClickHandlers, 2000);
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+
+      // Periodic check
+      setInterval(addClickHandlers, 3000);
     </script>
   </body>
 </html>
