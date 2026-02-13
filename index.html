@@ -72,9 +72,9 @@
       // Image filename to video mapping
       const imageToVideo = {
         'work-app': 'work_app1.mp4',
-        'work-beauty': 'work_fashion.mp4', 
+        'work-beauty': 'work_skincare.mp4', 
         'work-lifestyle': 'work_lifestyle.mp4',
-        'work-retail': 'work_skincare.mp4',
+        'work-retail': 'work_fashion.mp4',
         'work-tech': 'work_tech.mp4',
         'work-fnb': 'work_food.mp4'
       };
@@ -125,13 +125,13 @@
           if (text.includes('手機') || text.includes('app')) {
             return 'work_app1.mp4';
           }
-          if (text.includes('零售') || text.includes('時尚') || text.includes('beauty')) {
+          if (text.includes('零售') || text.includes('時尚') || text.includes('fashion')) {
             return 'work_fashion.mp4';
           }
           if (text.includes('生活') || text.includes('lifestyle')) {
             return 'work_lifestyle.mp4';
           }
-          if (text.includes('美容') || text.includes('護理') || text.includes('retail')) {
+          if (text.includes('美容') || text.includes('護理') || text.includes('beauty') || text.includes('skincare')) {
             return 'work_skincare.mp4';
           }
           if (text.includes('科技') || text.includes('產品') || text.includes('tech')) {
