@@ -56,54 +56,6 @@
         z-index: 2;
         position: relative;
       }
-      /* AI Production Section */
-      .ai-production {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background: rgba(0,0,0,0.9);
-        border: 1px solid #333;
-        border-radius: 12px;
-        padding: 16px 20px;
-        z-index: 100;
-        max-width: 280px;
-      }
-      .ai-production h3 {
-        color: #fff;
-        font-size: 16px;
-        margin: 0 0 8px 0;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-      .ai-production h3::before {
-        content: '🎬';
-      }
-      .ai-production p {
-        color: #888;
-        font-size: 13px;
-        margin: 0 0 12px 0;
-        line-height: 1.5;
-      }
-      .lang-tabs {
-        display: flex;
-        gap: 8px;
-        margin-bottom: 12px;
-      }
-      .lang-tab {
-        background: transparent;
-        border: 1px solid #444;
-        color: #666;
-        padding: 4px 10px;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 12px;
-        transition: all 0.2s;
-      }
-      .lang-tab:hover, .lang-tab.active {
-        border-color: #ff6b4a;
-        color: #ff6b4a;
-      }
     </style>
   </head>
   <body>
@@ -114,17 +66,6 @@
       <div class="reelhk-overlay" onclick="closeReelhkLightbox()"></div>
       <button class="reelhk-lightbox-close" onclick="closeReelhkLightbox()">&times;</button>
       <video id="reelhkVideo" controls autoplay></video>
-    </div>
-
-    <!-- AI Production Section -->
-    <div class="ai-production" id="aiProduction">
-      <div class="lang-tabs">
-        <button class="lang-tab active" onclick="setLang('tc')">繁中</button>
-        <button class="lang-tab" onclick="setLang('sc')">简中</button>
-        <button class="lang-tab" onclick="setLang('en')">EN</button>
-      </div>
-      <h3 id="aiTitle">AI 無界創作</h3>
-      <p id="aiDesc">想像即現實，品質即承諾</p>
     </div>
 
     <script>
@@ -160,20 +101,6 @@
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') closeReelhkLightbox();
       });
-
-      // AI Production Language Switcher
-      const aiContent = {
-        tc: { title: 'AI 無界創作', desc: '想像即現實，品質即承諾' },
-        sc: { title: 'AI 无界创作', desc: '想象即现实，品质即承诺' },
-        en: { title: 'AI Without Limits', desc: 'Where imagination becomes reality, quality is the promise' }
-      };
-
-      function setLang(lang) {
-        document.querySelectorAll('.lang-tab').forEach(tab => tab.classList.remove('active'));
-        event.target.classList.add('active');
-        document.getElementById('aiTitle').textContent = aiContent[lang].title;
-        document.getElementById('aiDesc').textContent = aiContent[lang].desc;
-      }
 
       // Find video based on image src or nearby text
       function findVideoForCard(img) {
