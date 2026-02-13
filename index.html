@@ -201,6 +201,23 @@
         childList: true, 
         subtree: true 
       });
+
+      // Simple text replacement for AI Production
+      function replaceText() {
+        const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+        let node;
+        while (node = walker.nextNode()) {
+          if (node.textContent.includes('無限修改')) {
+            node.textContent = node.textContent.replace(/無限修改/g, 'AI 無界創作');
+          }
+          if (node.textContent.includes('修改到滿意為止，確保質素')) {
+            node.textContent = node.textContent.replace(/修改到滿意為止，確保質素/g, '想像即現實，品質即承諾');
+          }
+        }
+      }
+      
+      setInterval(replaceText, 500);
+      setTimeout(replaceText, 500);
     </script>
   </body>
 </html>
