@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ReelHK - App Video Demo</title>
-    <link rel="icon" type="image/jpeg" href="/favicon.jpg">
+    <link rel="icon" type="image/png" href="/favicon.png">
     <style>
         * {
             margin: 0;
@@ -39,19 +39,61 @@
         }
         .video-wrapper {
             position: relative;
-            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            padding-bottom: 56.25%;
             height: 0;
             overflow: hidden;
             border-radius: 12px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            cursor: pointer;
         }
-        .video-wrapper iframe {
+        .video-wrapper video {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             border: none;
+            border-radius: 12px;
+        }
+        .play-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.4);
+            z-index: 10;
+            transition: opacity 0.3s;
+        }
+        .play-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .play-button {
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s, background 0.2s;
+        }
+        .play-button:hover {
+            transform: scale(1.1);
+            background: #fff;
+        }
+        .play-button::after {
+            content: '';
+            width: 0;
+            height: 0;
+            border-left: 24px solid #0a0a0a;
+            border-top: 16px solid transparent;
+            border-bottom: 16px solid transparent;
+            margin-left: 6px;
         }
         .back-link {
             margin-top: 30px;
@@ -70,17 +112,37 @@
         <h1>App Demo Video</h1>
         <p class="subtitle">Mobile Application Showcase</p>
         
-        <div class="video-wrapper">
-            <iframe src="https://player.vimeo.com/video/1163659893?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479" 
-                    frameborder="0" 
-                    allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media" 
-                    title="App Demo Video">
-            </iframe>
+        <div class="video-wrapper" id="videoWrapper">
+            <div class="play-overlay" id="playOverlay">
+                <div class="play-button"></div>
+            </div>
+            <video id="videoPlayer" loop playsinline>
+                <source src="work_app1.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
         </div>
         
         <a href="/" class="back-link">← Back to Home</a>
     </div>
-    
-    <script src="https://player.vimeo.com/api/player.js"></script>
+
+    <script>
+        const videoWrapper = document.getElementById('videoWrapper');
+        const videoPlayer = document.getElementById('videoPlayer');
+        const playOverlay = document.getElementById('playOverlay');
+
+        videoWrapper.addEventListener('click', () => {
+            if (videoPlayer.paused) {
+                videoPlayer.play();
+                playOverlay.classList.add('hidden');
+            } else {
+                videoPlayer.pause();
+                playOverlay.classList.remove('hidden');
+            }
+        });
+
+        videoPlayer.addEventListener('ended', () => {
+            playOverlay.classList.remove('hidden');
+        });
+    </script>
 </body>
 </html>

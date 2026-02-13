@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReelHK - Our Work</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #0a0a0a;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        h1 {
+            color: #fff;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #888;
+            font-size: 16px;
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .gallery-item {
+            position: relative;
+            aspect-ratio: 16/10;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .gallery-item:hover {
+            transform: scale(1.02);
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .play-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .play-icon::after {
+            content: '';
+            width: 0;
+            height: 0;
+            border-left: 18px solid #0a0a0a;
+            border-top: 12px solid transparent;
+            border-bottom: 12px solid transparent;
+            margin-left: 4px;
+        }
+        .gallery-item:hover .play-icon {
+            opacity: 1;
+        }
+        .item-title {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 20px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            color: #fff;
+            font-size: 18px;
+        }
+        
+        /* Lightbox */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .lightbox.active {
+            display: flex;
+        }
+        .lightbox-content {
+            position: relative;
+            max-width: 1000px;
+            width: 100%;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: -50px;
+            right: 0;
+            color: #fff;
+            font-size: 36px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            line-height: 1;
+        }
+        .lightbox-close:hover {
+            color: #ccc;
+        }
+        .lightbox-video {
+            width: 100%;
+            border-radius: 12px;
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 50px;
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+        .back-link:hover {
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Our Work</h1>
+        <p class="subtitle">Click to watch our latest projects</p>
+    </div>
+    
+    <div class="gallery">
+        <div class="gallery-item" data-video="work_app1.mp4">
+            <img src="work-app.jpg" alt="App Demo">
+            <div class="play-icon"></div>
+            <div class="item-title">App Demo</div>
+        </div>
+        
+        <div class="gallery-item" data-video="work_fashion.mp4">
+            <img src="work-beauty.jpg" alt="Fashion">
+            <div class="play-icon"></div>
+            <div class="item-title">Fashion</div>
+        </div>
+        
+        <div class="gallery-item" data-video="work_lifestyle.mp4">
+            <img src="work-lifestyle.jpg" alt="Lifestyle">
+            <div class="play-icon"></div>
+            <div class="item-title">Lifestyle</div>
+        </div>
+        
+        <div class="gallery-item" data-video="work_skincare.mp4">
+            <img src="work-retail.jpg" alt="Skincare">
+            <div class="play-icon"></div>
+            <div class="item-title">Skincare</div>
+        </div>
+        
+        <div class="gallery-item" data-video="work_tech.mp4">
+            <img src="work-tech.jpg" alt="Tech">
+            <div class="play-icon"></div>
+            <div class="item-title">Tech</div>
+        </div>
+    </div>
+    
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox">
+        <div class="lightbox-content">
+            <button class="lightbox-close">&times;</button>
+            <video class="lightbox-video" controls autoplay>
+                <source src="" type="video/mp4">
+            </video>
+        </div>
+    </div>
+    
+    <a href="/" class="back-link">← Back to Home</a>
+    
+    <script>
+        const galleryItems = document.querySelectorAll('.gallery-item');
+        const lightbox = document.getElementById('lightbox');
+        const lightboxVideo = lightbox.querySelector('video');
+        const lightboxClose = lightbox.querySelector('.lightbox-close');
+        
+        galleryItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const videoSrc = item.getAttribute('data-video');
+                lightboxVideo.src = videoSrc;
+                lightbox.classList.add('active');
+            });
+        });
+        
+        lightboxClose.addEventListener('click', closeLightbox);
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) closeLightbox();
+        });
+        
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            lightboxVideo.pause();
+            lightboxVideo.src = '';
+        }
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeLightbox();
+        });
+    </script>
+</body>
+</html>
